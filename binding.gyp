@@ -18,6 +18,7 @@
         "src/key.cc",
         "src/mouse.cc",
         "src/font.cc",
+        "src/image.cc",
         "src/joystick.cc",
         "src/controller.cc"
       ],

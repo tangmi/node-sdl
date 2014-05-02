@@ -16,6 +16,7 @@
 #include "key.h"
 #include "mouse.h"
 #include "font.h"
+#include "image.h"
 #include "joystick.h"
 #include "controller.h"
 #include "helpers.h"
@@ -97,6 +98,7 @@ init(Handle<Object> target)
   sdl::key::Init(target);
   sdl::mouse::Init(target);
   sdl::TTF::Initialize(target);
+  sdl::IMG::Initialize(target);
   sdl::joystick::Init(target);
   sdl::controller::Init(target);
 
@@ -183,11 +185,6 @@ init(Handle<Object> target)
   target->Set(String::New("TEXTUREACCESS"), TEXTUREACCESS);
   TEXTUREACCESS->Set(String::New("STATIC"), Number::New(SDL_TEXTUREACCESS_STATIC));
   TEXTUREACCESS->Set(String::New("STREAMING"), Number::New(SDL_TEXTUREACCESS_STREAMING));
-
-  Local<Object> IMG = Object::New();
-  target->Set(String::New("IMG"), IMG);
-
-  NODE_SET_METHOD(IMG, "load", sdl::IMG::Load);
 
   Local<Object> WM = Object::New();
   target->Set(String::New("WM"), WM);
@@ -828,32 +825,6 @@ Handle<Value> sdl::SetClipboardText(const Arguments& args) {
   }
 
   return Undefined();
-}
-
-
-// TODO: make an async version so this can be used in loops or parallel load images
-Handle<Value> sdl::IMG::Load(const Arguments& args) {
-  HandleScope scope;
-
-  if (!(args.Length() == 1 && args[0]->IsString())) {
-    return ThrowException(Exception::TypeError(String::New("Invalid arguments: Expected IMG::Load(String)")));
-  }
-
-  String::Utf8Value file(args[0]);
-
-  SDL_Surface *image;
-  image=IMG_Load(*file);
-  if(!image) {
-    return ThrowException(Exception::Error(String::Concat(
-      String::New("IMG::Load: "),
-      String::New(IMG_GetError())
-    )));
-  }
-
-  Handle<Object> ret = Object::New();
-  SurfaceWrapper* wrap = new SurfaceWrapper(ret);
-  wrap->surface_ = image;
-  return scope.Close(ret);
 }
 
 NODE_MODULE(node_sdl, init)

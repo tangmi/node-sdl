@@ -93,10 +93,6 @@ namespace sdl {
   v8::Handle<v8::Value> HasClipboardText(const v8::Arguments& args);
   v8::Handle<v8::Value> SetClipboardText(const v8::Arguments& args);
 
-  namespace IMG {
-    v8::Handle<v8::Value> Load(const v8::Arguments& args);
-  }
-
   namespace WM {
   }
 }
